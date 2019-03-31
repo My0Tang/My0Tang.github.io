@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>My0Tang</title>
+  
+  <subtitle>网络安全爱好者</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2019-03-31T06:04:45.641Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>My0Tang</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>业务授权访问模块测试</title>
+    <link href="http://yoursite.com/2019/03/30/%E4%B8%9A%E5%8A%A1%E6%8E%88%E6%9D%83%E8%AE%BF%E9%97%AE%E6%A8%A1%E5%9D%97%E6%B5%8B%E8%AF%95/"/>
+    <id>http://yoursite.com/2019/03/30/业务授权访问模块测试/</id>
+    <published>2019-03-30T20:08:00.000Z</published>
+    <updated>2019-03-31T06:04:45.641Z</updated>
+    
+    <content type="html"><![CDATA[<p>123456</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;123456&lt;/p&gt;
+
+      
+    
+    </summary>
+    
+      <category term="渗透测试" scheme="http://yoursite.com/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/"/>
+    
+    
+      <category term="渗透测试" scheme="http://yoursite.com/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/"/>
+    
+      <category term="业务逻辑" scheme="http://yoursite.com/tags/%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91/"/>
+    
+  </entry>
+  
+</feed>
