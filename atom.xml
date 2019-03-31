@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://my0tang.github.io/"/>
-  <updated>2019-03-31T09:56:52.010Z</updated>
+  <updated>2019-03-31T09:59:41.537Z</updated>
   <id>https://my0tang.github.io/</id>
   
   <author>
@@ -21,25 +21,19 @@
     <link href="https://my0tang.github.io/2019/03/30/test/"/>
     <id>https://my0tang.github.io/2019/03/30/test/</id>
     <published>2019-03-30T20:08:00.000Z</published>
-    <updated>2019-03-31T09:56:52.010Z</updated>
+    <updated>2019-03-31T09:59:41.537Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="蠢棠梨"><a href="#蠢棠梨" class="headerlink" title="蠢棠梨"></a>蠢棠梨</h1><h1 id="蠢棠梨-1"><a href="#蠢棠梨-1" class="headerlink" title="蠢棠梨"></a>蠢棠梨</h1>]]></content>
+    <content type="html"><![CDATA[<h1 id="test"><a href="#test" class="headerlink" title="test"></a>test</h1><h1 id="test-1"><a href="#test-1" class="headerlink" title="test"></a>test</h1>]]></content>
     
     <summary type="html">
     
       
       
-        &lt;h1 id=&quot;蠢棠梨&quot;&gt;&lt;a href=&quot;#蠢棠梨&quot; class=&quot;headerlink&quot; title=&quot;蠢棠梨&quot;&gt;&lt;/a&gt;蠢棠梨&lt;/h1&gt;&lt;h1 id=&quot;蠢棠梨-1&quot;&gt;&lt;a href=&quot;#蠢棠梨-1&quot; class=&quot;headerlink&quot; title=&quot;蠢棠梨&quot;&gt;&lt;/a&gt;蠢棠
+        &lt;h1 id=&quot;test&quot;&gt;&lt;a href=&quot;#test&quot; class=&quot;headerlink&quot; title=&quot;test&quot;&gt;&lt;/a&gt;test&lt;/h1&gt;&lt;h1 id=&quot;test-1&quot;&gt;&lt;a href=&quot;#test-1&quot; class=&quot;headerlink&quot; title=&quot;test&quot;
       
     
     </summary>
     
-      <category term="渗透测试" scheme="https://my0tang.github.io/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/"/>
-    
-    
-      <category term="渗透测试" scheme="https://my0tang.github.io/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/"/>
-    
-      <category term="业务逻辑" scheme="https://my0tang.github.io/tags/%E4%B8%9A%E5%8A%A1%E9%80%BB%E8%BE%91/"/>
     
   </entry>
   
