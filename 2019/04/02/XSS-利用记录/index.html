@@ -103,17 +103,18 @@
 
 
 
-  <meta name="description" content="Technology - never stop">
-<meta property="og:type" content="website">
-<meta property="og:title" content="标签">
-<meta property="og:url" content="https://my0tang.github.io/tags/index.html">
+  <meta name="description" content="XSS利用场景通过URL跳转的方法:https://www.example.com/SignUp?referrer=https://www.example.com/myAccount这是应用程序在用户登录应用程序后重定向的新链接 将URL重定向转换为XSS的好方法是使用JavaScript资源，例如javascript:alert(1); 此有效内容在URL中的referrer参数中传递。用户登录">
+<meta name="keywords" content="渗透测试,XSS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="XSS 利用记录">
+<meta property="og:url" content="https://my0tang.github.io/2019/04/02/XSS-利用记录/index.html">
 <meta property="og:site_name" content="My0Tang">
-<meta property="og:description" content="Technology - never stop">
+<meta property="og:description" content="XSS利用场景通过URL跳转的方法:https://www.example.com/SignUp?referrer=https://www.example.com/myAccount这是应用程序在用户登录应用程序后重定向的新链接 将URL重定向转换为XSS的好方法是使用JavaScript资源，例如javascript:alert(1); 此有效内容在URL中的referrer参数中传递。用户登录">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-03-31T09:12:14.574Z">
+<meta property="og:updated_time" content="2019-04-02T09:38:47.610Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="标签">
-<meta name="twitter:description" content="Technology - never stop">
+<meta name="twitter:title" content="XSS 利用记录">
+<meta name="twitter:description" content="XSS利用场景通过URL跳转的方法:https://www.example.com/SignUp?referrer=https://www.example.com/myAccount这是应用程序在用户登录应用程序后重定向的新链接 将URL重定向转换为XSS的好方法是使用JavaScript资源，例如javascript:alert(1); 此有效内容在URL中的referrer参数中传递。用户登录">
 
 
 
@@ -123,7 +124,7 @@
 
   
   
-  <link rel="canonical" href="https://my0tang.github.io/tags/">
+  <link rel="canonical" href="https://my0tang.github.io/2019/04/02/XSS-利用记录/">
 
 
 
@@ -133,7 +134,7 @@
   };
 </script>
 
-  <title>标签 | My0Tang</title>
+  <title>XSS 利用记录 | My0Tang</title>
   
 
 
@@ -241,7 +242,7 @@
         
         
           
-          <li class="menu-item menu-item-tags menu-item-active">
+          <li class="menu-item menu-item-tags">
 
     
     
@@ -363,96 +364,282 @@
           
             
 
-    
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-    
-
-  
-
-
           
           <div id="content" class="content">
             
 
   <div id="posts" class="posts-expand">
     
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://my0tang.github.io/2019/04/02/XSS-利用记录/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="My0Tang">
+      <meta itemprop="description" content="Technology - never stop">
+      <meta itemprop="image" content="/images/tx.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="My0Tang">
+    </span>
+
     
-    
-    <div class="post-block page">
       <header class="post-header">
 
-<h1 class="post-title" itemprop="name headline">标签
+        
+        
+          <h1 class="post-title" itemprop="name headline">XSS 利用记录
 
-</h1>
+              
+            
+          </h1>
+        
 
-<div class="post-meta">
-  
-  
+        <div class="post-meta">
+          <span class="post-time">
 
+            
+            
+            
 
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o">TEST</i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
 
+              
+                
+              
+
+              <time title="创建时间：2019-04-02 09:33:00 / 修改时间：09:38:47" itemprop="dateCreated datePublished" datetime="2019-04-02T09:33:00+00:00">2019-04-02</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/渗透测试/" itemprop="url" rel="index"><span itemprop="name">渗透测试</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/2019/04/02/XSS-利用记录/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/02/XSS-利用记录/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+            <div class="post-symbolscount">
+			
+				
+					<span id="/2019/04/02/XSS-利用记录/" class="leancloud_visitors" data-flag-title="XSS 利用记录">
+						<span class="post-meta-item-icon">
+							<i class="fa fa-eye"></i>
+						</span>
+				
+                <span class="post-meta-item-text">热度：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+				<span>℃</span>
+				<span class="post-meta-divider">|</span>
+            </span>
+          
+
+          
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">312 字</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">1 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="XSS利用场景"><a href="#XSS利用场景" class="headerlink" title="XSS利用场景"></a>XSS利用场景</h1><p>通过URL跳转的方法:<code>https://www.example.com/SignUp?referrer=https://www.example.com/myAccount</code>这是应用程序在用户登录应用程序后重定向的新链接</p>
+<p>将URL重定向转换为XSS的好方法是使用JavaScript资源，例如javascript:alert(1);</p>
+<p>此有效内容在URL中的referrer参数中传递。用户登录应用程序后，弹出一个值为1的警告框。最终的POC被发送到程序，其URL为：<br><code>https://www.example.com/SignUp?referrer=javascript:alert(document.domain);</code></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
 </div>
 
-</header>
+    
+    <div>
+      
+        
 
-      
-      
-      
-      <div class="post-body">
-        
-        
-          <div class="tag-cloud">
-            <div class="tag-cloud-title">
-              
-              
-                
-                  
-                
-              
-                
-                  
-                
-              
-                
-                  
-                
-              
-              目前共计 3 个标签
-            </div>
-            <div class="tag-cloud-tags">
-              
-                <a href="/tags/Hexo/" style="font-size: 12px; color: #ccc">Hexo</a> <a href="/tags/XSS/" style="font-size: 12px; color: #ccc">XSS</a> <a href="/tags/渗透测试/" style="font-size: 12px; color: #ccc">渗透测试</a>
-              
-            </div>
-          </div>
-        
-      </div>
-      
-      
+
       
     </div>
     
 
+    
+      
+    
+    
+      <div>
+        <div id="reward-container">
+  <div></div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="My0Tang 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/渗透测试/" rel="tag"><i class="fa fa-tag"></i> 渗透测试</a>
+          
+            <a href="/tags/XSS/" rel="tag"><i class="fa fa-tag"></i> XSS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/31/test/" rel="next" title="Hexo 博客 Next主题配置字数统计，阅读时长">
+                <i class="fa fa-chevron-left"></i> Hexo 博客 Next主题配置字数统计，阅读时长
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
 
 
-    
-    
-    
   </div>
 
 
@@ -485,8 +672,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <div class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -618,6 +814,23 @@
         </div>
       </div>
 
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#XSS利用场景"><span class="nav-number">1.</span> <span class="nav-text">XSS利用场景</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
       
 
       

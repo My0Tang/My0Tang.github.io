@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://my0tang.github.io/"/>
-  <updated>2019-03-31T10:58:15.468Z</updated>
+  <updated>2019-04-02T09:38:47.610Z</updated>
   <id>https://my0tang.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>XSS 利用记录</title>
+    <link href="https://my0tang.github.io/2019/04/02/XSS-%E5%88%A9%E7%94%A8%E8%AE%B0%E5%BD%95/"/>
+    <id>https://my0tang.github.io/2019/04/02/XSS-利用记录/</id>
+    <published>2019-04-02T09:33:00.000Z</published>
+    <updated>2019-04-02T09:38:47.610Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="XSS利用场景"><a href="#XSS利用场景" class="headerlink" title="XSS利用场景"></a>XSS利用场景</h1><p>通过URL跳转的方法:<code>https://www.example.com/SignUp?referrer=https://www.example.com/myAccount</code>这是应用程序在用户登录应用程序后重定向的新链接</p><p>将URL重定向转换为XSS的好方法是使用JavaScript资源，例如javascript:alert(1);</p><p>此有效内容在URL中的referrer参数中传递。用户登录应用程序后，弹出一个值为1的警告框。最终的POC被发送到程序，其URL为：<br><code>https://www.example.com/SignUp?referrer=javascript:alert(document.domain);</code></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;XSS利用场景&quot;&gt;&lt;a href=&quot;#XSS利用场景&quot; class=&quot;headerlink&quot; title=&quot;XSS利用场景&quot;&gt;&lt;/a&gt;XSS利用场景&lt;/h1&gt;&lt;p&gt;通过URL跳转的方法:&lt;code&gt;https://www.example.com/SignUp?re
+      
+    
+    </summary>
+    
+      <category term="渗透测试" scheme="https://my0tang.github.io/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/"/>
+    
+    
+      <category term="渗透测试" scheme="https://my0tang.github.io/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/"/>
+    
+      <category term="XSS" scheme="https://my0tang.github.io/tags/XSS/"/>
+    
+  </entry>
   
   <entry>
     <title>Hexo 博客 Next主题配置字数统计，阅读时长</title>
