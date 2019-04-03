@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://my0tang.github.io/"/>
-  <updated>2019-04-02T09:38:47.610Z</updated>
+  <updated>2019-04-02T15:19:44.079Z</updated>
   <id>https://my0tang.github.io/</id>
   
   <author>
@@ -21,15 +21,15 @@
     <link href="https://my0tang.github.io/2019/04/02/XSS-%E5%88%A9%E7%94%A8%E8%AE%B0%E5%BD%95/"/>
     <id>https://my0tang.github.io/2019/04/02/XSS-利用记录/</id>
     <published>2019-04-02T09:33:00.000Z</published>
-    <updated>2019-04-02T09:38:47.610Z</updated>
+    <updated>2019-04-02T15:19:44.079Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="XSS利用场景"><a href="#XSS利用场景" class="headerlink" title="XSS利用场景"></a>XSS利用场景</h1><p>通过URL跳转的方法:<code>https://www.example.com/SignUp?referrer=https://www.example.com/myAccount</code>这是应用程序在用户登录应用程序后重定向的新链接</p><p>将URL重定向转换为XSS的好方法是使用JavaScript资源，例如javascript:alert(1);</p><p>此有效内容在URL中的referrer参数中传递。用户登录应用程序后，弹出一个值为1的警告框。最终的POC被发送到程序，其URL为：<br><code>https://www.example.com/SignUp?referrer=javascript:alert(document.domain);</code></p>]]></content>
+    <content type="html"><![CDATA[<h1 id="利用URL重定向进行攻击"><a href="#利用URL重定向进行攻击" class="headerlink" title="利用URL重定向进行攻击"></a>利用URL重定向进行攻击</h1><p>通过URL跳转的方法:<code>https://www.example.com/SignUp?referrer=https://www.example.com/myAccount</code>这是应用程序在用户登录应用程序后重定向的新链接</p><p>将URL重定向转换为XSS的好方法是使用JavaScript资源，例如javascript:alert(1);</p><p>此有效内容在URL中的referrer参数中传递。用户登录应用程序后，弹出一个值为1的警告框。最终的POC被发送到程序，其URL为：<br><code>https://www.example.com/SignUp?referrer=javascript:alert(document.domain);</code></p>]]></content>
     
     <summary type="html">
     
       
       
-        &lt;h1 id=&quot;XSS利用场景&quot;&gt;&lt;a href=&quot;#XSS利用场景&quot; class=&quot;headerlink&quot; title=&quot;XSS利用场景&quot;&gt;&lt;/a&gt;XSS利用场景&lt;/h1&gt;&lt;p&gt;通过URL跳转的方法:&lt;code&gt;https://www.example.com/SignUp?re
+        &lt;h1 id=&quot;利用URL重定向进行攻击&quot;&gt;&lt;a href=&quot;#利用URL重定向进行攻击&quot; class=&quot;headerlink&quot; title=&quot;利用URL重定向进行攻击&quot;&gt;&lt;/a&gt;利用URL重定向进行攻击&lt;/h1&gt;&lt;p&gt;通过URL跳转的方法:&lt;code&gt;https://www.e
       
     
     </summary>
